@@ -1,24 +1,23 @@
 import time
-import matplotlib.pyplot as plt
-from base import data
-import numpy as np
 import pandas as pd
-#
-# >>> df = pd.DataFrame({
-# ...     'x': [1, 2, 2.5, 3, 3.5, 4, 5],
-# ...     'y': [4, 4, 4.5, 5, 5.5, 6, 6],
-# ... })
-# >>> ax = df.plot.kde()
-# data[data['year'] != 19]
-
-a = data[data['id#7'] == 'noExperience']
-b = data[data['id#7'] == 'between1And3']
-c = data[data['id#7'] == 'between3And6']
-d = data[data['id#7'] == 'moreThan6']
+import numpy as np
+from base import data
+import matplotlib.pyplot as plt
 
 
-s = pd.Series(a.RUR_net_000)
-ax = s.plot.kde()
+
+a = data.assign(idx=data.groupby('id#7').cumcount()).pivot_table(index='idx', columns='id#7', values='RUR_net_000', aggfunc='sum')
+
+a.plot.kde(figsize=(9, 6))
+
+plt.gca().set(xlim=(0.0, 400),
+              xlabel='salary net, RUR\nуровень дохода на руки, Руб.', ylabel='density, f(x)\nплотность распределения, f(x)')
+
+# figure name
+plt.suptitle(f'Density diagram, HH.ru: {data.period[0]}')
+plt.title('Диаграмма плотности распределения, \n'
+          'источник: HH.ru, Профессия: Аналитик, 2024.')
+
 
 plt.grid()
 plt.show()
